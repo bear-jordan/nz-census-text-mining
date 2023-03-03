@@ -1,0 +1,23 @@
+Q: How many of the refusals come from people who have anti-government sentiment?
+Q: How many of the refusals come from people who have privacy concerns?
+
+Thought: Can I do a logistic regression model using the solved cases as proof positive and proof negative to descern this?
+- Training data: Classified datasets (anti-government; privacy)
+- Testing data: Not reported dataset
+
+Structure
+1. EDA for Training
+    - Class distribution for positive / negative cases
+    - Word count distribution for postive / negative cases
+    - Most common words
+2. Text pre-processing
+    - Removing punctuations, special characters, URLs & hashtags
+    - Removing leading, trailing & extra white spaces/tabs
+    - Typos, slangs are corrected, abbreviations are written in their long forms
+    - Stopword removal
+    - Stemming
+    - Lemmatization
+3. Vectorization
+    - TF-IDF
+4. Modeling
+    - CV

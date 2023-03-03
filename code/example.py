@@ -1,15 +1,27 @@
+# Modules
 import nltk
 from nltk.stem import SnowballStemmer
 from nltk.corpus import stopwords
 
-stopwords = stopwords.words("english")
-snowballStemmer = SnowballStemmer("english")
+# Body
+def clean(text):
+    snowballStemmer = SnowballStemmer("english")
+    text = text.lower()
+    tokens = nltk.word_tokenize(text)
+    tokens = [snowballStemmer.stem(word) for word in tokens]
+    tokens = [word for word in tokens if word not in stopwords.words("english")]
+    
+    return tokens
 
-text = "This is a Demo Text for NLP using NLTK. Full form of NLTK is Natural Language Toolkit"
-lowerText = text.lower()
-wordTokens = nltk.word_tokenize(lowerText)
-stemmedTokens = [snowballStemmer.stem(word) for word in wordTokens]
-nonStopWords = [word for word in stemmedTokens if word not in stopwords]
-frequencies = nltk.FreqDist(nonStopWords)
-
-print(frequencies.most_common(5))
+    
+def gen_frequencies(tokens, save=False):
+    return nltk.FreqDist(tokens)
+    
+def main(rawText):
+    text = clean(rawText)
+    freqs = gen_frequencies(text)
+    print(freqs.most_common(5))
+    
+if __name__ == "__main__":
+    rawText = "This is a Demo Text for NLP using NLTK. Full form of NLTK is Natural Language Toolkit"
+    main(rawText)
