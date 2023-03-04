@@ -1,0 +1,7 @@
+code/__pycache__/
+code/utils/__pycache__/config.cpython-311.pyc
+code/utils/__pycache__/eda.cpython-311.pyc
+code/utils/__pycache__/tpp.cpython-311.pyc
+code/utils/__pycache__/vct.cpython-311.pyc
+code/utils/__pycache__/model.cpython-311.pyc
+.DS_Store
