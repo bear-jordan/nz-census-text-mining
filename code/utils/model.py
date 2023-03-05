@@ -1,28 +1,61 @@
 import pandas as pd
-from sklearn.linear_model import LogisticRegression
-from sklearn.model_selection import cross_val_score, StratifiedKFold
-from sklearn.metrics import classification_report, confusion_matrix
+from sklearn.model_selection import StratifiedKFold
+from sklearn.model_selection import GridSearchCV
+from sklearn.model_selection import cross_val_score
 
-def fit_model(X, y):
-    model = LogisticRegression(solver="lbfgs", multi_class="multinomial")
+from utils.models import define_models
+
+def tune_models(model, grid, X, y):
     skf = StratifiedKFold(shuffle=True)
-    results = cross_val_score(model, X, y, cv=skf)
-    model.fit(X, y)
+    search = GridSearchCV(model, grid, cv=skf)
+    search.fit(X, y)
     
-    return (model, results)
+    return search
     
-def report(model, X, y, results):
-    print("== Results across five runs ==")
-    print([round(r, 4) for r in results])
-    print(round(results.mean(), 5))
+    
+def predict():
+    ...
+    
+def report_tune(search):
+    print("= Model Results =")
+    print(search.best_estimator_)
+    print(round(search.best_score_, 4))
     print()
-    print(confusion_matrix(y, model.predict(X)))
-    print(classification_report(y, model.predict(X)))
+
+def report_cv(cvResults):
+    print("== CV Scores ==")
+    print(round(cvResults.mean(), 4))
+    print(cvResults)
+    print()
     print()
     
-def run_model(X, Xnew, y):
-    model, results = fit_model(X, y)
-    report(model, X, y, results)
-    predictions = model.predict(Xnew)
+def get_best_model(modelResults):
+    bestIndex = 0
+    bestScore = 0
+    for i, model in enumerate(modelResults):
+        score = model["score"]
+        if score > bestScore:
+            bestIndex = i
+            bestScore = score
+            
+    return modelResults[i]["model"]
+            
     
-    return predictions
+def run_tune(X, y):
+    modelResults = list()
+    models = define_models()
+    for model, grid in models:
+        search = tune_models(model, grid, X, y)
+        bestModel = search.best_estimator_
+        report_tune(search)    
+        report_cv(cross_val_score(bestModel, X, y, cv=5))
+        modelResults.append({"model": bestModel, "score": search.best_score_})
+    
+    bestModel = get_best_model(modelResults)
+    bestModel.fit(X, y)
+    
+    return bestModel
+    
+    
+def run_model(bestModel, Xnew):
+    return bestModel.predict(Xnew)
